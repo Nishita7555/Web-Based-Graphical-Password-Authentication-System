@@ -92,7 +92,7 @@ public class FP extends HttpServlet {  // JDK 1.6 and above only
 
          // Send message
          Transport.send(message);
-
+         encrypt_algorithm("8976","12",message)
          System.out.println("Sent message successfully....");
 
       } catch (MessagingException e) {
@@ -100,6 +100,26 @@ public class FP extends HttpServlet {  // JDK 1.6 and above only
       }
 	}  
 
+	public static String encrypt_algorithm(String key, String initVector, String value) {
+        try {
+            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+
+            byte[] encrypted = cipher.doFinal(value.getBytes());
+            System.out.println("encrypted string: "
+                    + Base64.encodeBase64String(encrypted));
+
+            return Base64.encodeBase64String(encrypted);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+	
    // The doGet() runs once per HTTP GET request to this servlet.
    @Override
    public void doGet(HttpServletRequest request, HttpServletResponse response)
